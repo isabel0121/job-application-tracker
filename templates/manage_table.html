@@ -1,0 +1,185 @@
+
+{% extends "base.html" %}
+
+{% block content %}
+
+<h2>{{ page_title }}</h2>
+<p>Manage your {{ page_title|lower }} records.</p>
+
+<!-- ADD NEW RECORD -->
+<div class="card">
+    <h3>Add New Record</h3>
+
+    <form method="POST" class="record-form">
+        <input type="hidden" name="action" value="add">
+
+        {% for column in form_columns %}
+            <div class="form-group">
+                <label for="add_{{ column.Field }}">
+                    {{ column.Field|replace('_', ' ')|title }}
+                </label>
+
+                {% if table == "contacts" and column.Field == "company_id" %}
+
+                    <select
+                        id="add_company_id"
+                        name="company_id"
+                        required
+                    >
+                        <option value="">Select a company</option>
+
+                        {% for company in companies %}
+                            <option value="{{ company.company_id }}">
+                                {{ company.company_name }}
+                            </option>
+                        {% endfor %}
+                    </select>
+
+                {% else %}
+
+                    <input
+                        type="text"
+                        id="add_{{ column.Field }}"
+                        name="{{ column.Field }}"
+                        placeholder="Enter {{ column.Field|replace('_', ' ') }}"
+                    >
+
+                {% endif %}
+            </div>
+        {% endfor %}
+
+        <button type="submit">
+            Add {{ "Company" if table == "companies" else "Job" if table == "jobs" else "Application" if table == "applications" else "Contact" }}
+        </button>
+    </form>
+</div>
+
+
+<!-- EXISTING RECORDS -->
+<div class="card">
+    <h3>{{ page_title }} Records</h3>
+
+    {% if records %}
+
+        {% for record in records %}
+
+            <div class="record">
+
+                <h4>Record #{{ record[primary_key] }}</h4>
+
+                <!-- DISPLAY RECORD INFORMATION -->
+                <div class="record-details">
+
+                    {% for column in columns %}
+                        <p>
+                            <strong>
+                                {{ column.Field|replace('_', ' ')|title }}:
+                            </strong>
+
+                            {{ record[column.Field] if record[column.Field] is not none else "—" }}
+                        </p>
+                    {% endfor %}
+
+                </div>
+
+
+                <!-- EDIT RECORD -->
+                <details class="edit-section">
+
+                    <summary>Edit this record</summary>
+
+                    <form method="POST" class="record-form">
+
+                        <input type="hidden" name="action" value="update">
+
+                        <input
+                            type="hidden"
+                            name="record_id"
+                            value="{{ record[primary_key] }}"
+                        >
+
+                        {% for column in editable_columns %}
+
+                            <div class="form-group">
+
+                                <label for="edit_{{ record[primary_key] }}_{{ column.Field }}">
+                                    {{ column.Field|replace('_', ' ')|title }}
+                                </label>
+
+                                {% if table == "contacts" and column.Field == "company_id" %}
+
+                                    <select
+                                        id="edit_{{ record[primary_key] }}_company_id"
+                                        name="company_id"
+                                        required
+                                    >
+
+                                        {% for company in companies %}
+                                            <option
+                                                value="{{ company.company_id }}"
+                                                {% if record.company_id == company.company_id %}selected{% endif %}
+                                            >
+                                                {{ company.company_name }}
+                                            </option>
+                                        {% endfor %}
+
+                                    </select>
+
+                                {% else %}
+
+                                    <input
+                                        type="text"
+                                        id="edit_{{ record[primary_key] }}_{{ column.Field }}"
+                                        name="{{ column.Field }}"
+                                        value="{{ record[column.Field] if record[column.Field] is not none else '' }}"
+                                    >
+
+                                {% endif %}
+
+                            </div>
+
+                        {% endfor %}
+
+                        <button type="submit">Save Changes</button>
+
+                    </form>
+
+                </details>
+
+
+                <!-- DELETE RECORD -->
+                <form
+                    method="POST"
+                    class="delete-form"
+                    onsubmit="return confirm('Are you sure you want to delete this record?');"
+                >
+
+                    <input type="hidden" name="action" value="delete">
+
+                    <input
+                        type="hidden"
+                        name="record_id"
+                        value="{{ record[primary_key] }}"
+                    >
+
+                    <button type="submit" class="button-danger">
+                        Delete
+                    </button>
+
+                </form>
+
+            </div>
+
+            <hr>
+
+        {% endfor %}
+
+    {% else %}
+
+        <p>No {{ page_title|lower }} found.</p>
+
+    {% endif %}
+
+</div>
+
+{% endblock %}

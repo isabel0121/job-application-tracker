@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h2>Job Match</h2>
+<p>Find job opportunities that match your skills and experience.</p>
+
+<div class="card">
+    <h3>Match Jobs to Your Skills</h3>
+
+    <form method="POST">
+        <label for="skills">
+            Enter your skills, separated by commas:
+        </label>
+
+        <textarea
+            id="skills"
+            name="skills"
+            rows="4"
+            placeholder="Example: Python, SQL, Java, HTML, CSS"
+            required>{{ skills }}</textarea>
+
+        <button type="submit">Find Matching Jobs</button>
+    </form>
+</div>
+
+{% if matches %}
+    <div class="card">
+        <h3>Matching Jobs</h3>
+
+        {% for match in matches %}
+            <div class="record">
+                <h4>{{ match.job.get('job_title', 'Job Opportunity') }}</h4>
+
+                <p>
+                    <strong>Company:</strong>
+                    {{ match.company_name }}
+                </p>
+
+                <p>
+                    <strong>Match:</strong>
+                    {{ match.percentage }}%
+                </p>
+
+                <p>
+                    <strong>Matching skills:</strong>
+                    {{ match.matched_skills | join(', ') }}
+                </p>
+
+                <div class="match-bar">
+                    <div
+                        class="match-progress"
+                        data-width="{{ match.percentage }}">
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+
+{% elif skills %}
+    <div class="card">
+        <p>No matching jobs found. Try entering different skills.</p>
+    </div>
+{% endif %}
+
+{% endblock %}

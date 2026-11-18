@@ -1,0 +1,72 @@
+
+{% extends "base.html" %}
+
+{% block content %}
+
+<section class="welcome">
+    <h2>Welcome to Your Job Application Tracker</h2>
+    <p>Manage companies, explore job opportunities, track applications, and organize professional contacts in one place.</p>
+</section>
+
+<h2>Dashboard Overview</h2>
+
+<div class="dashboard-grid">
+
+    <a class="dashboard-card" href="{{ url_for('manage_table', table='companies') }}">
+        <h3>Companies</h3>
+        <p class="stat">{{ counts.companies }}</p>
+        <p>Manage companies you are interested in.</p>
+    </a>
+
+    <a class="dashboard-card" href="{{ url_for('manage_table', table='jobs') }}">
+        <h3>Jobs</h3>
+        <p class="stat">{{ counts.jobs }}</p>
+        <p>Browse and organize job opportunities.</p>
+    </a>
+
+    <a class="dashboard-card" href="{{ url_for('manage_table', table='applications') }}">
+        <h3>Applications</h3>
+        <p class="stat">{{ counts.applications }}</p>
+        <p>Keep track of your applications.</p>
+    </a>
+
+    <a class="dashboard-card" href="{{ url_for('manage_table', table='contacts') }}">
+        <h3>Contacts</h3>
+        <p class="stat">{{ counts.contacts }}</p>
+        <p>Organize your professional contacts.</p>
+    </a>
+
+</div>
+
+<div class="card">
+    <h2>Recent Applications</h2>
+
+    {% if recent_applications %}
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Application ID</th>
+                        <th>Job ID</th>
+                        <th>Application Date</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for application in recent_applications %}
+                    <tr>
+                        <td>{{ application.application_id }}</td>
+                        <td>{{ application.job_id }}</td>
+                        <td>{{ application.application_date }}</td>
+                        <td>{{ application.status }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <p>No applications have been added yet.</p>
+    {% endif %}
+</div>
+
+{% endblock %}

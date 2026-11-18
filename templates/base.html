@@ -1,0 +1,54 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ page_title or "Job Application Tracker" }}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+<header class="top-header">
+    <div class="container header-content">
+        <h1>Job Application Tracker</h1>
+
+        <nav>
+            <a href="{{ url_for('dashboard') }}">Dashboard</a>
+            <a href="{{ url_for('manage_table', table='companies') }}">Companies</a>
+            <a href="{{ url_for('manage_table', table='jobs') }}">Jobs</a>
+            <a href="{{ url_for('manage_table', table='applications') }}">Applications</a>
+            <a href="{{ url_for('manage_table', table='contacts') }}">Contacts</a>
+            <a href="{{ url_for('job_match') }}">Job Match</a>
+        </nav>
+    </div>
+</header>
+
+<main class="container main-content">
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="message {{ category }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    {% block content %}{% endblock %}
+
+</main>
+
+<footer>
+    <p>COP 4751 - Job Application Tracker</p>
+</footer>
+
+<script>
+document.querySelectorAll(".match-progress").forEach(function(bar) {
+    bar.style.width = bar.dataset.width + "%";
+});
+</script>
+
+</body>
+</html>
